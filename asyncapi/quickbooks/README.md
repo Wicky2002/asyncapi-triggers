@@ -4,8 +4,11 @@
 > To move to it:
 > - Import `ballerinax/quickbooks.trigger as quickbooks` in place of `ballerinax/trigger.quickbooks`.
 > - The service types are the same, plus `ChangeOrderService` and `CompanyCurrencyService`. Every callback is renamed to the past tense, such as `onAccountCreated` for `onAccountCreate` and `onBillPaymentCreated` for `onBillpaymentCreate`, so rename yours.
+> - Some service types get callbacks with no old equivalent, so add them too: `onClassMerged`, `onCurrencyDeleted`, and `on<Entity>Emailed` on `CreditMemoService`, `EstimateService`, `InvoiceService`, `PaymentService`, `PurchaseOrderService` and `RefundReceiptService`. `SalesReceiptService` now has its own callbacks, such as `onSalesReceiptCreated`, in place of the `onRefundreceipt*` ones it had by mistake.
 > - `QuickBookEvent` now holds the CloudEvents fields. The changed entity's ID is in `intuitentityid`, the company ID in `intuitaccountid`, and a merge gives the old ID in `data.deletedId`.
-> - Set `ListenerConfig.webhookSecret` to your verifier token, in place of `verificationToken`. `realmIds` is gone.
+> - Set `ListenerConfig.webhookSecret` to your verifier token, in place of `verificationToken`.
+> - `realmIds` is gone, so the listener passes on events for every company your app is connected to. To keep only some, check `intuitaccountid` in your callbacks.
+> - The listener now answers QuickBooks with 200 before it runs your callbacks, so an error a callback returns is only logged and QuickBooks doesn't send the event again. Handle failures in the callback.
 > - Set your Intuit app's webhook payload format to CloudEvents.
 
 ## Overview
