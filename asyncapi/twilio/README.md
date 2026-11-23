@@ -4,7 +4,9 @@
 > To move to it:
 > - Import `ballerinax/twilio.trigger as twilio` in place of `ballerinax/trigger.twilio`.
 > - The service types and callbacks are the same. `SmsStatusService` adds `onScheduled`, `onRead`, `onCanceled` and `onPartiallyDelivered`, and `CallStatusService` adds `onInitiated`, so implement those too.
-> - Set `ListenerConfig.webhookSecret` to your Auth Token and `webhookBaseUrl` to the public URL Twilio calls.
+> - Twilio now calls `/smsStatus` for message statuses and `/callStatus` for call statuses, in place of `/`, so update the status callback URLs in Twilio.
+> - Set `ListenerConfig.webhookSecret` to your Auth Token and `webhookBaseUrl` to the public base URL, without the `/smsStatus` or `/callStatus` path and without a trailing slash, such as `https://example.com`. The signature is checked over that URL plus the path, so any other value fails every delivery.
+> - The listener now answers Twilio with 200 before it runs your callback, so an error your callback returns is only logged and Twilio doesn't retry. Handle failures in the callback.
 
 ## Overview
 
